@@ -31,28 +31,68 @@ def get_user_input():
         except ValueError:
             print("Please enter a valid number.")
     
-    # Get down payment
+    # Get down payment method
+    print("\n💰 Down Payment Input Method:")
+    print("1. Enter dollar amount")
+    print("2. Enter percentage")
+    
     while True:
         try:
-            down_payment = float(input("Enter down payment: $") or "92000")
-            if down_payment < 0:
-                print("Down payment cannot be negative.")
-                continue
-            if down_payment >= home_price:
-                print("Down payment must be less than home price.")
+            method = input("Choose method (1 or 2): ").strip()
+            if method not in ['1', '2']:
+                print("Please enter 1 or 2.")
                 continue
             break
-        except ValueError:
-            print("Please enter a valid number.")
+        except:
+            print("Please enter 1 or 2.")
+    
+    # Get down payment based on method
+    if method == '1':
+        # Dollar amount
+        while True:
+            try:
+                down_payment = float(input("Enter down payment amount: $") or "92000")
+                if down_payment < 0:
+                    print("Down payment cannot be negative.")
+                    continue
+                if down_payment >= home_price:
+                    print("Down payment must be less than home price.")
+                    continue
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+        down_payment_percent = (down_payment / home_price) * 100
+    else:
+        # Percentage
+        while True:
+            try:
+                down_payment_percent = float(input("Enter down payment percentage: ") or "23")
+                if down_payment_percent < 0:
+                    print("Percentage cannot be negative.")
+                    continue
+                if down_payment_percent >= 100:
+                    print("Percentage must be less than 100%.")
+                    continue
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+        down_payment = (down_payment_percent / 100) * home_price
     
     # Calculate loan amount
     loan_amount = home_price - down_payment
-    down_payment_percent = (down_payment / home_price) * 100
     
     print(f"\n📊 Purchase Summary:")
     print(f"   Home Price: ${home_price:,.2f}")
     print(f"   Down Payment: ${down_payment:,.2f} ({down_payment_percent:.1f}%)")
     print(f"   Loan Amount: ${loan_amount:,.2f}")
+    
+    # Add PMI information
+    if down_payment_percent < 20:
+        print(f"   ⚠️  PMI Required: Down payment < 20% typically requires Private Mortgage Insurance")
+    elif down_payment_percent == 20:
+        print(f"   ✅ No PMI: 20% down payment avoids PMI requirements")
+    else:
+        print(f"   💰 Great: Higher down payment reduces monthly payments and total interest")
     
     return home_price, down_payment, loan_amount
 

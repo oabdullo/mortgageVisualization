@@ -194,25 +194,79 @@ def main():
         format="%d"
     )
     
-    down_payment = st.sidebar.number_input(
-        "Down Payment ($)",
-        min_value=0,
-        max_value=home_price,
-        value=default_data.get('down_payment', 92000),
-        step=1000,
-        format="%d"
+    # Down payment input method selection
+    st.sidebar.markdown("### 💰 Down Payment")
+    down_payment_method = st.sidebar.radio(
+        "Choose input method:",
+        ["Dollar Amount", "Percentage"],
+        horizontal=True
     )
+    
+    if down_payment_method == "Dollar Amount":
+        down_payment = st.sidebar.number_input(
+            "Down Payment ($)",
+            min_value=0,
+            max_value=home_price,
+            value=default_data.get('down_payment', 92000),
+            step=1000,
+            format="%d",
+            key="down_payment_dollar"
+        )
+        down_payment_percent = (down_payment / home_price) * 100 if home_price > 0 else 0
+    else:  # Percentage
+        # Common down payment percentages
+        st.sidebar.markdown("**Quick Select:**")
+        col1, col2, col3 = st.sidebar.columns(3)
+        
+        with col1:
+            if st.button("5%", key="btn_5pct"):
+                st.session_state.down_payment_percent = 5.0
+        with col2:
+            if st.button("10%", key="btn_10pct"):
+                st.session_state.down_payment_percent = 10.0
+        with col3:
+            if st.button("20%", key="btn_20pct"):
+                st.session_state.down_payment_percent = 20.0
+        
+        # Manual slider
+        down_payment_percent = st.sidebar.slider(
+            "Down Payment (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=st.session_state.get('down_payment_percent', 23.0),
+            step=0.5,
+            format="%.1f%%",
+            key="down_payment_percent"
+        )
+        down_payment = (down_payment_percent / 100) * home_price
     
     # Calculate loan amount
     loan_amount = home_price - down_payment
-    down_payment_percent = (down_payment / home_price) * 100
     
-    # Display summary
+    # Display summary with both values
     st.sidebar.markdown("### 📊 Purchase Summary")
     st.sidebar.metric("Home Price", f"${home_price:,}")
-    st.sidebar.metric("Down Payment", f"${down_payment:,}")
-    st.sidebar.metric("Down Payment %", f"{down_payment_percent:.1f}%")
+    
+    # Show both down payment values
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.metric("Down Payment", f"${down_payment:,.0f}")
+    with col2:
+        st.metric("Down Payment %", f"{down_payment_percent:.1f}%")
+    
     st.sidebar.metric("Loan Amount", f"${loan_amount:,}")
+    
+    # Add helpful information
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("💡 **Tip**: Switch between dollar amount and percentage to see how they relate!")
+    
+    # Down payment information
+    if down_payment_percent < 20:
+        st.sidebar.warning("⚠️ **PMI Required**: Down payment < 20% typically requires Private Mortgage Insurance")
+    elif down_payment_percent == 20:
+        st.sidebar.success("✅ **No PMI**: 20% down payment avoids PMI requirements")
+    else:
+        st.sidebar.info("💰 **Great!**: Higher down payment reduces monthly payments and total interest")
     
     # Loan options
     st.sidebar.header("🏦 Loan Options")
