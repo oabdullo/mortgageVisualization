@@ -1,20 +1,19 @@
 {
+  "home_price": 400000,
+  "down_payment": 92000,
   "sample_loans": [
     {
       "name": "15-Year @ 5.0%",
-      "principal": 500000,
       "annual_rate": 0.05,
       "years": 15
     },
     {
       "name": "30-Year @ 6.5%",
-      "principal": 500000,
       "annual_rate": 0.065,
       "years": 30
     },
     {
       "name": "20-Year @ 5.5%",
-      "principal": 500000,
       "annual_rate": 0.055,
       "years": 20
     }
