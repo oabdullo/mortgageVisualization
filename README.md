@@ -2,6 +2,12 @@
 
 A comprehensive Python tool for calculating and visualizing mortgage amortization schedules, with support for comparing different loan terms and interest rates.
 
+## 🌐 Live Demo
+
+**Try the interactive calculator online:** [https://dullovisual.streamlit.app/](https://dullovisual.streamlit.app/)
+
+The web app allows you to input your own mortgage rates and terms, compare multiple loan options, and generate detailed amortization schedules with visualizations.
+
 ## Features
 
 - 📊 **Complete Amortization Tables**: Generate detailed month-by-month payment breakdowns
@@ -10,6 +16,7 @@ A comprehensive Python tool for calculating and visualizing mortgage amortizatio
 - 💾 **Export Options**: Save results to CSV and generate visual reports
 - 🎯 **Flexible Input**: Support for any loan amount, interest rate, and term
 - 🖥️ **Interactive Mode**: Input your own mortgage rates instead of using static values
+- 🌐 **Web Interface**: User-friendly Streamlit web app for easy access
 
 ## Project Structure
 
@@ -32,6 +39,17 @@ mortgage_visualization/
 ```
 
 ## Quick Start
+
+### Option 1: Use the Web App (Recommended)
+**🌐 [Launch the interactive web app](https://dullovisual.streamlit.app/)**
+
+No installation required! The web app provides a user-friendly interface for:
+- Inputting your own mortgage rates and terms
+- Comparing multiple loan options
+- Generating detailed amortization schedules
+- Creating visualizations and downloading results
+
+### Option 2: Run Locally
 
 1. **Install dependencies**
    ```bash
