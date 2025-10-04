@@ -9,6 +9,27 @@ A comprehensive Python tool for calculating and visualizing mortgage amortizatio
 - 📈 **Data Visualization**: Create charts and interactive dashboards
 - 💾 **Export Options**: Save results to CSV and generate visual reports
 - 🎯 **Flexible Input**: Support for any loan amount, interest rate, and term
+- 🖥️ **Interactive Mode**: Input your own mortgage rates instead of using static values
+
+## Project Structure
+
+```
+mortgage_visualization/
+├── src/                          # Core source code
+│   ├── mortgage_calculator.py    # Main calculator classes
+│   └── visualizations.py         # Chart and dashboard generation
+├── test_and_demo/                # Test files and demo scripts
+│   ├── tests/                    # Unit tests
+│   ├── demo.py                   # Basic demo
+│   ├── simple_demo.py            # Simple demo (no viz dependencies)
+│   └── interactive_mortgage_input.py  # Interactive rate input
+├── data/                         # Sample data files
+├── output/                       # Generated charts and CSV files
+├── notebooks/                    # Jupyter notebooks for analysis
+├── app.py                        # Streamlit web app
+├── main.py                       # Original main script
+└── run_with_sample_data.py       # Enhanced main script with interactive mode
+```
 
 ## Quick Start
 
@@ -19,7 +40,24 @@ A comprehensive Python tool for calculating and visualizing mortgage amortizatio
 
 2. **Run the calculator**
    ```bash
+   # Main interactive calculator
+   python run_with_sample_data.py
+   
+   # Or use the original main script
    python main.py
+   ```
+
+3. **Run tests and demos**
+   ```bash
+   # Run demos
+   python test_and_demo/demo.py
+   python test_and_demo/simple_demo.py
+   
+   # Run interactive calculator
+   python test_and_demo/interactive_mortgage_input.py
+   
+   # Run tests
+   python -m pytest test_and_demo/tests/
    ```
 
 ## Usage Examples

@@ -4,6 +4,10 @@ Demo script showing different home buying scenarios
 """
 
 import json
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.mortgage_calculator import MortgageCalculator, MortgageComparison
 
 def run_scenario(home_price, down_payment, scenario_name):

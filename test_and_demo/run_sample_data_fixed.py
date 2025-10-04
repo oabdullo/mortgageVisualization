@@ -4,12 +4,15 @@ Script to run mortgage analysis using data from sample_loans.json (fixed version
 """
 
 import json
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.mortgage_calculator import MortgageCalculator, MortgageComparison
 import matplotlib.pyplot as plt
 import pandas as pd
-import os
 
-def load_sample_loans(json_file="data/sample_loans.json"):
+def load_sample_loans(json_file="../data/sample_loans.json"):
     """Load loan data from JSON file."""
     with open(json_file, 'r') as f:
         data = json.load(f)

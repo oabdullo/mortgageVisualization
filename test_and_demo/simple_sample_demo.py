@@ -4,9 +4,13 @@ Simple demo script using sample_loans.json data (no visualization dependencies)
 """
 
 import json
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.mortgage_calculator import MortgageCalculator, MortgageComparison
 
-def load_sample_loans(json_file="data/sample_loans.json"):
+def load_sample_loans(json_file="../data/sample_loans.json"):
     """Load loan data from JSON file."""
     with open(json_file, 'r') as f:
         data = json.load(f)

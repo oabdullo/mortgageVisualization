@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-Quick demo script for the Mortgage Amortization Calculator
+Simple demo script for the Mortgage Amortization Calculator (no visualization dependencies)
 """
 
-from src.mortgage_calculator import MortgageCalculator, MortgageComparison
-from src.visualizations import MortgageVisualizer
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-def demo():
-    """Run a quick demonstration of the mortgage calculator."""
-    print("🏠 Mortgage Amortization Calculator - Demo")
+from src.mortgage_calculator import MortgageCalculator, MortgageComparison
+
+def simple_demo():
+    """Run a simple demonstration of the mortgage calculator."""
+    print("🏠 Mortgage Amortization Calculator - Simple Demo")
     print("=" * 50)
     
     # Create a comparison with the specified rates
@@ -59,7 +62,28 @@ def demo():
     print(f"\nFirst 5 months of 30-year loan:")
     print(loan_30yr.amortization_table[['Month', 'Payment', 'Principal', 'Interest', 'Remaining_Balance']].head().to_string(index=False))
     
-    print("\n✅ Demo complete! Run 'python main.py' for full interactive experience.")
+    # Show year-end balances
+    print(f"\nYear-end balances comparison:")
+    year_ends_15yr = loan_15yr.get_year_end_balances()
+    year_ends_30yr = loan_30yr.get_year_end_balances()
+    
+    for year in [1, 5, 10, 15, 20, 25, 30]:
+        if year <= 15:
+            balance_15yr = year_ends_15yr[year_ends_15yr['Year'] == year]['Remaining_Balance'].iloc[0] if year <= len(year_ends_15yr) else 0
+            print(f"Year {year:2d}: 15-year: ${balance_15yr:>10,.2f}", end="")
+        else:
+            print(f"Year {year:2d}: 15-year: ${'Paid Off':>10}", end="")
+        
+        if year <= 30:
+            balance_30yr = year_ends_30yr[year_ends_30yr['Year'] == year]['Remaining_Balance'].iloc[0] if year <= len(year_ends_30yr) else 0
+            print(f" | 30-year: ${balance_30yr:>10,.2f}")
+        else:
+            print(f" | 30-year: ${'Paid Off':>10}")
+    
+    print("\n✅ Simple demo complete!")
+    print("📝 To install full dependencies and run visualizations:")
+    print("   pip install -r requirements.txt")
+    print("   python main.py")
 
 if __name__ == "__main__":
-    demo()
+    simple_demo()
