@@ -274,11 +274,104 @@ def main():
     # Load loan configurations
     sample_loans = default_data['sample_loans']
     
+    # Initialize session state for custom loans if not exists
+    if 'custom_loans' not in st.session_state:
+        st.session_state.custom_loans = sample_loans.copy()
+    
+    # Rate modification section
+    st.sidebar.markdown("### ⚙️ Customize Rates")
+    
+    # Toggle between sample and custom rates
+    use_custom_rates = st.sidebar.checkbox("Edit mortgage rates", value=False, help="Enable to modify interest rates and terms")
+    
+    if use_custom_rates:
+        st.sidebar.markdown("**Edit existing loans:**")
+        
+        # Create editable loan options
+        updated_loans = []
+        for i, loan_data in enumerate(st.session_state.custom_loans):
+            with st.sidebar.expander(f"📝 {loan_data['name']}", expanded=False):
+                # Loan name
+                new_name = st.text_input(
+                    "Loan Name", 
+                    value=loan_data['name'], 
+                    key=f"name_{i}"
+                )
+                
+                # Interest rate
+                new_rate = st.number_input(
+                    "Interest Rate (%)", 
+                    min_value=0.0, 
+                    max_value=30.0, 
+                    value=loan_data['annual_rate'] * 100, 
+                    step=0.1, 
+                    format="%.2f",
+                    key=f"rate_{i}"
+                )
+                
+                # Loan term
+                new_years = st.number_input(
+                    "Loan Term (years)", 
+                    min_value=1, 
+                    max_value=50, 
+                    value=loan_data['years'], 
+                    step=1,
+                    key=f"years_{i}"
+                )
+                
+                # Update loan data
+                updated_loan = {
+                    'name': new_name,
+                    'principal': loan_amount,
+                    'annual_rate': new_rate / 100,
+                    'years': int(new_years)
+                }
+                updated_loans.append(updated_loan)
+        
+        # Add new loan option
+        st.sidebar.markdown("**Add new loan:**")
+        if st.sidebar.button("➕ Add Loan Option"):
+            if len(st.session_state.custom_loans) < 6:  # Limit to 6 loans
+                new_loan = {
+                    'name': f"Custom Loan {len(st.session_state.custom_loans) + 1}",
+                    'principal': loan_amount,
+                    'annual_rate': 6.0 / 100,
+                    'years': 30
+                }
+                st.session_state.custom_loans.append(new_loan)
+                st.rerun()
+            else:
+                st.sidebar.warning("Maximum 6 loan options allowed")
+        
+        # Remove loan option
+        if len(st.session_state.custom_loans) > 1:
+            st.sidebar.markdown("**Remove loan:**")
+            loan_to_remove = st.sidebar.selectbox(
+                "Select loan to remove",
+                options=[f"{i}: {loan['name']}" for i, loan in enumerate(st.session_state.custom_loans)],
+                key="remove_loan"
+            )
+            if st.sidebar.button("🗑️ Remove Selected Loan"):
+                remove_index = int(loan_to_remove.split(':')[0])
+                st.session_state.custom_loans.pop(remove_index)
+                st.rerun()
+        
+        # Reset to sample data
+        if st.sidebar.button("🔄 Reset to Sample Data"):
+            st.session_state.custom_loans = sample_loans.copy()
+            st.rerun()
+        
+        # Use custom loans
+        loans_to_use = updated_loans
+    else:
+        # Use sample loans
+        loans_to_use = sample_loans
+    
     # Create comparison
     comparison = MortgageComparison()
     loans = []
     
-    for loan_data in sample_loans:
+    for loan_data in loans_to_use:
         loan = comparison.add_loan(
             principal=loan_amount,
             annual_rate=loan_data['annual_rate'],
@@ -292,6 +385,12 @@ def main():
     comparison_df = comparison.compare_loans()
     
     # Main content
+    # Show custom rates indicator
+    if use_custom_rates:
+        st.success("🎯 **Custom Rates Active** - You're comparing loans with your custom interest rates and terms!")
+    else:
+        st.info("📊 **Sample Rates** - Toggle 'Edit mortgage rates' in the sidebar to customize rates")
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -310,6 +409,18 @@ def main():
         st.metric("Lowest Total Cost", 
                  f"${total_costs.min():,.2f}",
                  f"{comparison_df.loc[min_cost_idx, 'loan_name']}")
+    
+    # Current rates display
+    if use_custom_rates:
+        st.header("⚙️ Current Loan Settings")
+        rate_cols = st.columns(len(loans))
+        for i, loan in enumerate(loans):
+            with rate_cols[i]:
+                st.metric(
+                    loan.loan_name,
+                    f"{loan.annual_rate * 100:.2f}%",
+                    f"{loan.years} years"
+                )
     
     # Charts section
     st.header("📊 Loan Comparison Charts")
